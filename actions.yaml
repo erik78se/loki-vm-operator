@@ -1,0 +1,7 @@
+set-config:
+  description: 'Set a full config "$(base64 config.yaml) replacing the current and restarts the service.'
+  params:
+    config:
+      decription: 'The base64 enconded file content'
+      type: string
+  required: [ config ]
