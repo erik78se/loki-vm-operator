@@ -2,9 +2,11 @@
 import re
 import sys
 import subprocess
+from urllib import request
 import zipfile
 import shutil
 from pathlib import Path
+import requests
 
 
 class LokiManager:
@@ -128,6 +130,18 @@ class LokiManager:
         except Exception as e:
             print("Error verifying config", e)
             return None
+
+    def is_ready(self):
+        """
+        Checks the status of loki service by calling the api on localhost. 
+        Manually: curl -G -s http://localhost:3100/ready
+        """
+        url = "http://localhost:3100/ready"
+        r = requests.get(url, timeout=2.50)
+        return r.text.strip() == "ready"
+
+
+
 
     def _purge(self):
         """ Whipes the installation and remove all traces of Loki """

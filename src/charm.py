@@ -89,12 +89,20 @@ class LokiCharm(CharmBase):
         Manage the status of the service.
         """
         stat = subprocess.call(["systemctl", "is-active", "--quiet", "loki"])
-        if(stat == 0):  # if 0 (active), print "Active"
+        
+        if(stat == 0):  # if 0 (active)
             v = self.loki_ops_manager.loki_version()
             self.unit.set_workload_version(v)
-            self.unit.status = ActiveStatus("Active")
         else:
-            self.unit.status = WaitingStatus("Loki service inactive.")
+            self.unit.status = WaitingStatus("not running.")
+            return
+        
+        ready = self.loki_ops_manager.is_ready()
+
+        if ready:
+            self.unit.status = ActiveStatus("running & ready.")
+        else:
+            self.unit.status = WaitingStatus("not ready.")
 
 
 if __name__ == "__main__":  # pragma: nocover
